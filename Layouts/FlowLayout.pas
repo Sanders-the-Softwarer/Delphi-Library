@@ -29,8 +29,6 @@ TFlowLayout - алгоритм выравнивания дочерних компонент в один горизонтальный или
 
 unit FlowLayout ;
 
-{$I '..\..\options.inc'}
-
 interface
 
 uses SysUtils, Classes, Controls, Math, Types, ActnList, Contnrs, BaseLayout,

@@ -41,8 +41,6 @@ DevExpress.
 
 unit InputLayout ;
 
-{$I '..\..\options.inc'}
-
 interface
 
 uses

@@ -25,8 +25,6 @@ RightControl и CenterControl задают объекты, располагаемые соответственно слева,
 
 unit DualLayout ;
 
-{$I '..\..\options.inc'}
-
 interface
 
 uses

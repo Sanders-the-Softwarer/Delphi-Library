@@ -23,16 +23,14 @@ unit LayoutMisc ;
 
 ------------------------------------------------------------------------------ }
 
-{$I '..\..\options.inc'}
-
 interface
 
 uses SysUtils, Classes, Types, Controls, Forms, Windows, Messages, Graphics,
-  Gradient, STSNotifier, ExtCtrls ;
+  STSNotifier, ExtCtrls ;
 
 type
   { Стили отрисовки фона }
-  TLayoutBackground = ( lbDefault, lbTransparent, lbSettingsGradient, lbGradient ) ;
+  TLayoutBackground = ( lbDefault, lbTransparent ) ;
 
   { Поля сообщения WM_ERASEBKGND }
   TWMEraseBkgnd = packed record
@@ -72,12 +70,6 @@ var
 { Оповещение о конвертации устаревшего свойства }
 procedure NotifyConvertProperty ( Sender : TComponent ; PropName : string ) ;
 
-{ Возврат bitmap-а для отрисовки градиента }
-function GradientPattern ( ColorBegin, ColorEnd : TColor ;
-                           Reverse : boolean ; Rotation : TGradientRotation ;
-                           Shift : TGradientShift ;  Style : TGradientStyle ;
-                           UseSysColors : boolean ) : TBitmap ;
-
 implementation
 
 uses RecordList, LayoutSettings, BaseLayout ;
@@ -107,67 +99,6 @@ function TControlList.Last : TControl ;
 begin
   Result := TControl ( inherited Last ) ;
   Assert ( Result <> nil ) ;
-end ;
-
-{ TGradientList }
-
-{ Определение строкового ключа для поиска градиента }
-function GradientKey ( ColorBegin, ColorEnd : TColor ;
-                       Reverse : boolean ; Rotation : TGradientRotation ;
-                       Shift : TGradientShift ;  Style : TGradientStyle ;
-                       UseSysColors : boolean ) : string ;
-begin
-  if UseSysColors
-    then Result := 'SYSCOLORS'
-    else Result := Format ( '%x %x', [ ColorBegin, ColorEnd ]) ;
-  Result := Result + Format ( '%d %d %d %d', [ Ord ( Reverse ), Rotation,
-                                               Shift, Ord ( Style )]) ;
-end ;
-
-type
-  TGradientList = class ( TRecordList )
-  public
-    property Key [ ArrIndex : integer ] : AnsiString index 0
-             read GetStr write SetSortStr ;
-    property Component [ ArrIndex : integer ] : TObject index 1
-             read GetOwnObj write SetOwnObj ;
-  end ;
-
-var
-  GradientList : TGradientList ;
-  GradientBitmap : TBitmap ;
-
-{ Возврат bitmap-а для отрисовки градиента }
-function GradientPattern ( ColorBegin, ColorEnd : TColor ;
-                           Reverse : boolean ; Rotation : TGradientRotation ;
-                           Shift : TGradientShift ;  Style : TGradientStyle ;
-                           UseSysColors : boolean ) : TBitmap ;
-var
-  Key : string ;
-  Index : integer ;
-  Gradient : TGradient ;
-  Copied : boolean ;
-begin
-  Assert ( GradientList <> nil ) ;
-  Assert ( GradientBitmap <> nil ) ;
-  Key := GradientKey ( ColorBegin, ColorEnd, Reverse, Rotation, Shift, Style, UseSysColors ) ;
-  Index := GradientList.SortIndexOf ( Key ) ;
-  if Index < 0 then
-  begin
-    Gradient := TGradient.Create ( nil ) ;
-    Gradient.ColorBegin := ColorBegin ;
-    Gradient.ColorEnd := ColorEnd ;
-    Gradient.Reverse := Reverse ;
-    Gradient.Rotation := Rotation ;
-    Gradient.Shift := Shift ;
-    Gradient.Style := Style ;
-    Gradient.UseSysColors := UseSysColors ;
-    Index := GradientList.InsertKey ( Key ) ;
-    GradientList.Component [ Index ] := Gradient ;
-  end ;
-  Copied := ( GradientList.Component [ Index ] as TGradient ).CopyPatternTo ( GradientBitmap ) ;
-  Assert ( Copied ) ;
-  Result := GradientBitmap ;
 end ;
 
 { TTransparentPanel }
@@ -235,16 +166,6 @@ begin
     then TransparentEraseBkgnd ( Msg )
     else inherited ;
 end ;
-
-initialization
-  GradientList := TGradientList.Create ;
-  GradientList.RecordLength := 2 ;
-  GradientList.SetSortOrder ( 0 ) ;
-  GradientBitmap := TBitmap.Create ;
-
-finalization
-  FreeAndNil ( GradientList ) ;
-  FreeAndNil ( GradientBitmap ) ;
 
 end.
 

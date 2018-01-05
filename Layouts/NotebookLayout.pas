@@ -35,8 +35,6 @@ unit NotebookLayout ;
 
 ------------------------------------------------------------------------------ }
 
-{$I '..\..\options.inc'}
-
 interface
 
 uses SysUtils, Types, Classes, Controls, Contnrs, BaseLayout ;

@@ -113,9 +113,9 @@ end ;
 
 procedure Register ;
 begin
-  RegisterComponents ( 'Layouts', [ TLayoutSettings, TDelphiLayout,
+(*  RegisterComponents ( 'Layouts', [ TLayoutSettings, TDelphiLayout,
     TBorderLayout, TFlowLayout, TDualLayout, TNotebookLayout, TInputLayout,
-    TActionPane, TInputLayoutLabel, TSplitterLayout {, TRuledLayout} ]) ;
+    TActionPane, TInputLayoutLabel, TSplitterLayout {, TRuledLayout} ]) ;*)
   { Регистрация редакторов }
   RegisterPropertyEditor ( TypeInfo ( TStrings ), TLayoutSettings,
     'Labels', nil ) ;
@@ -195,7 +195,6 @@ begin
   if Assigned ( Layout.Parent ) and ( Layout.Parent is TLayout )
     then Layout.Background := Settings.IDESettings.ChildBackground
     else Layout.Background := Settings.IDESettings.RootBackground ;
-  Layout.Gradient.Assign ( Settings.GradientSettings ) ;
   { BorderLayout }
   if Sender is TBorderLayout then
     if Settings.IDESettings.AddFlowLayout and

@@ -28,8 +28,6 @@
 
 unit RuledLayout ;
 
-{$I '..\..\options.inc'}
-
 interface
 
 uses SysUtils, Classes, Controls, BaseLayout ;

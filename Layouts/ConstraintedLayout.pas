@@ -17,7 +17,7 @@ unit ConstraintedLayout ;
 
 interface
 
-uses SysUtils, Classes, Controls, BaseLayout ;
+uses SysUtils, Classes, Controls, BaseLayout, LayoutMisc ;
 
 type
 
@@ -120,7 +120,7 @@ var
   List : TControlList ;
   i : integer ;
 begin
-  if Layout.Loading then exit ;
+  if Layout.IsLoading then exit ;
   List := Layout.ListControls ( false ) ;
   try
     { ”ничтожим информацию об удаленных с окна компонентах }
@@ -191,7 +191,7 @@ begin
   if FControl = NewControl then exit ;
   Constraints.FindByControl ( NewControl ).Free ;
   FControl := NewControl ;
-  if not Layout.Loading then Layout.RequestLayout ;
+  if not Layout.IsLoading then Layout.RequestLayout ;
 end ;
 
 end.

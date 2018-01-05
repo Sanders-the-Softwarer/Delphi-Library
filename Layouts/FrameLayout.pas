@@ -20,8 +20,8 @@ unit FrameLayout ;
 
 interface
 
-uses Classes, SysUtils, Controls, Math, BaseLayout, ConstraintedLayout,
-  RecordList ;
+uses Classes, Types, SysUtils, Controls, Math, BaseLayout, ConstraintedLayout,
+  RecordList, LayoutMisc ;
 
 type
 
@@ -67,7 +67,7 @@ type
   protected
     { Доопределение методов родительских классов }
     function ConstraintsClass : TLayoutConstraintsClass ; override ;
-    procedure DoLayout ; override ;
+    procedure DoLayout ( Rect : TRect ) ; override ;
     procedure DesignPaintLayout ; override ;
   public
     constructor Create ( AOwner : TComponent ) ; override ;
@@ -109,7 +109,7 @@ var
   Controls : TControlList ;
   i : integer ;
 begin
-  Controls := ListControls ( not Designing ) ;
+  Controls := ListControls ( not IsDesigning ) ;
   try
     { Сбросим старые данные }
     Rows.Clear ;

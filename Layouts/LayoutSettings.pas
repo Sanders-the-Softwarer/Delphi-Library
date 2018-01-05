@@ -37,8 +37,8 @@ unit LayoutSettings ;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Controls, Forms, Contnrs, Graphics,
-  STSNotifier, LayoutMisc, Gradient ;
+  Windows, Messages, SysUtils, Classes, Controls, Forms, Contnrs,
+  Graphics, STSNotifier, LayoutMisc ;
 
 type
   { Заранее объявим основной компонент }
@@ -143,38 +143,6 @@ type
     property LabelsInfo : TLabelsInfo read FLabelsInfo write SetLabelsInfo ;
   end ;
 
-  { Настройки градиента }
-  TGradientSettings = class ( TLayoutSubSettings )
-  private
-    FColorBegin, FColorEnd : TColor ;
-    FReverse, FUseSysColors : boolean ;
-    FRotation : TGradientRotation ;
-    FShift : TGradientShift ;
-    FStyle : TGradientStyle ;
-    FOnChange : TNotifyEvent ;
-  protected
-    procedure Changed ;
-    procedure SetColorBegin ( NewColor : TColor ) ;
-    procedure SetColorEnd ( NewColor : TColor ) ;
-    procedure SetReverse ( NewReverse : boolean ) ;
-    procedure SetRotation ( NewRotation : TGradientRotation ) ;
-    procedure SetShift ( NewShift : TGradientShift ) ;
-    procedure SetStyle ( NewStyle : TGradientStyle ) ;
-    procedure SetUseSysColors ( NewUseSysColors : boolean ) ;
-  public
-    procedure AfterConstruction ; override ;
-    procedure Assign ( Source : TPersistent ) ; override ;
-    property OnChange : TNotifyEvent read FOnChange write FOnChange ;
-  published
-    property ColorBegin : TColor read FColorBegin write SetColorBegin ;
-    property ColorEnd   : TColor read FColorEnd write SetColorEnd ;
-    property Reverse    : boolean read FReverse write SetReverse ;
-    property Rotation   : TGradientRotation read FRotation write SetRotation ;
-    property Shift      : TGradientShift read FShift write SetShift ;
-    property Style      : TGradientStyle read FStyle write SetStyle ;
-    property UseSysColors : boolean read FUseSysColors write SetUseSysColors ;
-  end ;
-
   { Компонент настроек }
   TLayoutSettings = class ( TComponent )
   private
@@ -184,7 +152,6 @@ type
     FGuid    : string ;
     FComponentSettings : TComponentSettings ;
     FIDESettings : TIDESettings ;
-    FGradientSettings : TGradientSettings ;
     FlagIntoWriteState : boolean ;
   protected
     procedure CreateGuid ;
@@ -204,7 +171,6 @@ type
     { Методы свойств }
     procedure SetComponentSettings ( NewSettings : TComponentSettings ) ;
     procedure SetIDESettings ( NewSettings : TIDESettings ) ;
-    procedure SetGradientSettings ( NewGradient : TGradientSettings ) ;
   public
     constructor Create ( AOwner : TComponent ) ; override ;
     constructor CreateShadow ;
@@ -224,8 +190,6 @@ type
         read FComponentSettings write SetComponentSettings ;
     property IDESettings : TIDESettings
         read FIDESettings write SetIDESettings ;
-    property GradientSettings : TGradientSettings
-        read FGradientSettings write SetGradientSettings ;
     property Labels : TStrings read GetLabels write SetLabels stored false ;
   end ;
 
@@ -269,7 +233,7 @@ type
     function GetSettings ( ArrIndex, Index : integer ) : TLayoutSettings ;
     procedure SetSettings ( ArrIndex, Index : integer ; NewSettings : TLayoutSettings ) ;
   public
-    property Guid [ ArrIndex : integer ] : string index 0
+    property Guid [ ArrIndex : integer ] : AnsiString index 0
              read GetStr write SetSortStr ;
     property Settings [ ArrIndex : integer ] : TLayoutSettings index 1
              read GetSettings write SetSettings ;
@@ -315,9 +279,7 @@ begin
   inherited ;
   FComponentSettings := TComponentSettings.Create ( Self ) ;
   FIDESettings := TIDESettings.Create ( Self ) ;
-  FGradientSettings := TGradientSettings.Create ( Self ) ;
   FComponentStyle := ComponentStyle - [ csInheritable ] ;
-  FGradientSettings.OnChange := GradientChanged ;
   FindByGuidNotifier.RegisterNotification ( FindByGuidNotification ) ;
   FindDefaultNotifier.RegisterNotification ( FindDefaultNotification ) ;
   if Shadow
@@ -345,7 +307,6 @@ begin
   inherited ;
   FreeAndNil ( FComponentSettings ) ;
   FreeAndNil ( FIDESettings ) ;
-  FreeAndNil ( FGradientSettings ) ;
 end ;
 
 { Чтение-запись GUID из dfm }
@@ -513,10 +474,6 @@ procedure TLayoutSettings.SetIDESettings ( NewSettings : TIDESettings ) ;
 begin
 end ;
 
-procedure TLayoutSettings.SetGradientSettings ( NewGradient : TGradientSettings ) ;
-begin
-end ;
-
 { TLayoutSubSettings }
 
 constructor TLayoutSubSettings.Create ( ASettings : TLayoutSettings ) ;
@@ -531,8 +488,8 @@ procedure TIDESettings.AfterConstruction ;
 begin
   inherited ;
   FAddFlowLayout := true ;
-  FRootBackground := lbSettingsGradient ;
-  FChildBackground := lbTransparent ;
+  FRootBackground := lbDefault ;
+  FChildBackground := lbDefault ;
   FRegistrySettings := true ;
   FMsgConvertProperties := true ;
   FFlipSplitter := true ;
@@ -683,88 +640,6 @@ begin
     LabelsInfo.Add ( System.Copy ( S, 1, p - 1 ), System.Copy ( S, p + 1, Length ( S ))) ;
   end ;
   NotifyConvertProperty ( Settings, 'Labels' ) ;
-end ;
-
-{ TGradientSettings }
-
-procedure TGradientSettings.AfterConstruction;
-begin
-  inherited;
-  FColorBegin := clWhite ;
-  FColorEnd   := clBtnFace ;
-  FStyle := gsRadialBR ;
-end;
-
-procedure TGradientSettings.Assign ( Source : TPersistent ) ;
-begin
-  Assert ( Source <> nil ) ;
-  if Source is TGradientSettings then
-    with TGradientSettings ( Source ) do
-    begin
-      Self.ColorBegin := ColorBegin ;
-      Self.ColorEnd   := ColorEnd ;
-      Self.Reverse    := Reverse ;
-      Self.Rotation   := Rotation ;
-      Self.Shift      := Shift ;
-      Self.Style      := Style ;
-      Self.UseSysColors := UseSysColors ;
-    end
-  else
-    inherited ;
-end ;
-
-procedure TGradientSettings.Changed ;
-begin
-  if Assigned ( FOnChange ) then FOnChange ( Self ) ;
-end ;
-
-procedure TGradientSettings.SetColorBegin ( NewColor : TColor ) ;
-begin
-  if FColorBegin = NewColor then exit ;
-  FColorBegin := NewColor ;
-  if not UseSysColors then Changed ;
-end ;
-
-procedure TGradientSettings.SetColorEnd ( NewColor : TColor ) ;
-begin
-  if FColorEnd = NewColor then exit ;
-  FColorEnd := NewColor ;
-  if not UseSysColors then Changed ;
-end ;
-
-procedure TGradientSettings.SetReverse ( NewReverse : boolean ) ;
-begin
-  if FReverse = NewReverse then exit ;
-  FReverse := NewReverse ;
-  Changed ;
-end ;
-
-procedure TGradientSettings.SetRotation ( NewRotation : TGradientRotation ) ;
-begin
-  if FRotation = NewRotation then exit ;
-  FRotation := NewRotation ;
-  Changed ;
-end ;
-
-procedure TGradientSettings.SetShift ( NewShift : TGradientShift ) ;
-begin
-  if FShift = NewShift then exit ;
-  FShift := NewShift ;
-  Changed ;
-end ;
-
-procedure TGradientSettings.SetStyle ( NewStyle : TGradientStyle ) ;
-begin
-  if FStyle = NewStyle then exit ;
-  FStyle := NewStyle ;
-  Changed ;
-end ;
-
-procedure TGradientSettings.SetUseSysColors ( NewUseSysColors : boolean ) ;
-begin
-  if FUseSysColors = NewUseSysColors then exit ;
-  FUseSysColors := NewUseSysColors ;
-  Changed ;
 end ;
 
 { TDefaultSettingsFinder }

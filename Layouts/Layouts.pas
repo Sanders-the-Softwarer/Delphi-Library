@@ -126,7 +126,8 @@ interface
 
 uses
   Classes, BasicLayouts, FlowLayout, BorderLayout, DualLayout, FrameLayout,
-  ConstraintedLayout ;
+  ConstraintedLayout, NotebookLayout, InputLayout, SplitterLayout,
+  LayoutSettings ;
 
 type
 
@@ -142,14 +143,44 @@ type
     property Margins ;
   end ;
 
+  { Панель кнопок, привязанная к ActionList-у }
+  TActionPane = class ( TCustomActionPane )
+  published
+    property Actions ;
+    property Category ;
+  end;
+
   { Многостраничное выравнивание }
   TNotebookLayout = class ( TCustomNotebookLayout )
+  public
+    property Pages ;
   published
     property ActivePage ;
+    property AutoSelectFirst ;
+    property OnChanging ;
+    property OnChange ;
+  end ;
+
+  { Выравнивание панели ввода данных }
+  TInputLayout = class ( TCustomInputLayout )
+  published
+    property AutoLabelWidth ;
+    property LabelWidth ;
+    property LabelAlignment ;
+    property RubberControl ;
   end ;
 
   { Выравнивание двойного списка }
-  TDualListLayout = class ( TCustomDualListLayout )
+
+  TDualLayout = class ( TCustomDualLayout )
+  published
+    property Margins ;
+    property LeftControl ;
+    property RightControl ;
+    property CenterControl ;
+  end ;
+
+  TVerticalDualLayout = class ( TCustomVerticalDualLayout )
   published
     property Margins ;
     property LeftControl ;
@@ -177,15 +208,36 @@ type
     property Constraints ;
   end ;
 
-procedure Register ;
+  { Панель для выравнивания с полозком }
+  TSplitterLayout = class ( TCustomSplitterLayout )
+  published
+    property BottomControl ;
+    property DefaultPosition ;
+    property Direction ;
+    property EnableFlip ;
+    property HCursor ;
+    property HideControl ;
+    property LeftControl ;
+    property MinLeft ;
+    property MinRight ;
+    property Ratio ;
+    property ResizeBehaviour ;
+    property RightControl ;
+    property Position ;
+    property TopControl ;
+    property VCursor ;
+  end;
+
+procedure Register;
 
 implementation
 
 procedure Register ;
 begin
-  RegisterComponents ( 'Layouts', [ TDelphiLayout, TBorderLayout,
-    TFlowLayout, TDualListLayout, TNotebookLayout, TFrameLayout ]) ;
-end ;
+  RegisterComponents ( 'Layouts', [ TLayoutSettings, TDelphiLayout,
+    TBorderLayout, TFlowLayout, TDualLayout, TNotebookLayout, TInputLayout,
+    TActionPane, TInputLayoutLabel, TSplitterLayout {, TRuledLayout} ]) ;
+end;
 
 end.
 

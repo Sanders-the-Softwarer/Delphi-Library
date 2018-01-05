@@ -55,8 +55,6 @@
 
 unit BorderLayout ;
 
-{$I '..\..\options.inc'}
-
 interface
 
 uses Classes, Types, Controls, BaseLayout ;

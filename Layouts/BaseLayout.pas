@@ -22,8 +22,6 @@
 
 unit BaseLayout ;
 
-{$I '..\..\options.inc'}
-
 interface
 
 uses
@@ -49,7 +47,6 @@ type
     FBackground : TLayoutBackground ;
     LayoutDepth : integer ;
     FlagIntoLayout, FlagDontRequestSettings : boolean ;
-    FGradient : TGradientSettings ;
     FServiceControls : TComponentList ;
     FNewControls : TComponentList ;
     FControlJustAdded : TControl ;
@@ -63,7 +60,6 @@ type
     procedure CmControlChange ( var M : TMessage ) ; message CM_CONTROLCHANGE ;
     procedure CmControlListChange ( var M : TMessage ) ; message CM_CONTROLLISTCHANGE ;
     { Оповещения, на которые мы реагируем }
-    procedure GradientChanged ( Sender : TObject ) ;
     procedure SettingsChanged ( Sender : TObject ) ;
     procedure LayoutSettingsNotification ( Sender : TObject ) ;
     { Внутренние методы, предназначенные к наследованию }
@@ -103,7 +99,6 @@ type
     function  GetSettings : TLayoutSettings ;
     procedure SetSettings ( NewSettings : TLayoutSettings ) ;
     procedure SetBackground ( NewBackground : TLayoutBackground ) ;
-    procedure SetGradient ( NewGradient : TGradientSettings ) ;
   public
     { Доопределение родительских методов }
     constructor Create ( AOwner : TComponent ) ; override ;
@@ -125,7 +120,6 @@ type
     procedure RequestLayout ;
   published
     property Background : TLayoutBackground read FBackground write SetBackground ;
-    property Gradient : TGradientSettings read FGradient write SetGradient ;
     property Active : boolean read FActive write SetActive stored true ;
     property Margins : TLayoutMargins read FMargins write SetMargins ;
     property Settings : TLayoutSettings read GetSettings write SetSettings stored false ;
@@ -210,8 +204,6 @@ resourcestring
 
 constructor TLayout.Create ( AOwner : TComponent ) ;
 begin
-  FGradient := TGradientSettings.Create ( Self.Settings ) ;
-  FGradient.OnChange := GradientChanged ;
   FMargins := CreateLayoutMargins ;
   FNewControls := TComponentList.Create ( false ) ;
   inherited ;
@@ -232,7 +224,6 @@ begin
   if LayoutSettingsNotifier <> nil then
     LayoutSettingsNotifier.RemoveNotification ( LayoutSettingsNotification ) ;
   inherited ;
-  FreeAndNil ( FGradient ) ;
   FreeAndNil ( FMargins ) ;
   FreeAndNil ( FServiceControls ) ;
   FreeAndNil ( FNewControls ) ;
@@ -604,23 +595,8 @@ end ;
 
 { Отрисовка компонента }
 procedure TLayout.Paint ;
-var
-  G : TGradientSettings ;
-  B : TBitmap ;
 begin
-  case Background of
-    lbDefault :
-      inherited ;
-    lbGradient, lbSettingsGradient :
-      begin
-        if Background = lbGradient
-          then G := Gradient
-          else G := Settings.GradientSettings ;
-        B := GradientPattern ( G.ColorBegin, G.ColorEnd, G.Reverse, G.Rotation,
-                               G.Shift, G.Style, G.UseSysColors ) ;
-        Canvas.StretchDraw ( ClientRect, B ) ;
-      end ;
-  end ;
+  if Background = lbDefault then inherited ;
   if DesignHighlightLayout then DesignPaintLayout ;
 end ;
 
@@ -678,18 +654,11 @@ begin
     FSettings := LayoutSettings ;
 end ;
 
-{ Реакция на изменение настроек градиента }
-procedure TLayout.GradientChanged ( Sender : TObject ) ;
-begin
-  if Background = lbGradient then PaintingChanged ;
-end ;
-
 { Реакция на изменение глобальных настроек }
 procedure TLayout.SettingsChanged ( Sender : TObject ) ;
 begin
   Assert ( Sender is TSTSNotifier ) ;
   if TSTSNotifier ( Sender ).Data <> Self.Settings then exit ;
-  if Background = lbSettingsGradient then PaintingChanged ;
   RequestLayout ;
 end ;
 
@@ -741,11 +710,6 @@ begin
   OldTransparent := Transparent ;
   Transparent := ( FBackground = lbTransparent ) ;
   if OldTransparent = Transparent then PaintingChanged ;
-end ;
-
-procedure TLayout.SetGradient ( NewGradient : TGradientSettings ) ;
-begin
-  FGradient.Assign ( NewGradient ) ;
 end ;
 
 { Сравнение контролов для сортировки в ListControls }

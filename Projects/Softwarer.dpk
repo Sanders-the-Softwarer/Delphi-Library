@@ -1,0 +1,58 @@
+package Softwarer;
+
+{$R *.res}
+{$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO ON}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION OFF}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES ON}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DEFINE DEBUG}
+{$ENDIF IMPLICITBUILDING}
+{$IMPLICITBUILD ON}
+
+requires
+  rtl,
+  vcl;
+
+contains
+  LayoutSettings in '..\Layouts\LayoutSettings.pas',
+  BaseLayout in '..\Layouts\BaseLayout.pas',
+  DualLayout in '..\Layouts\DualLayout.pas',
+  Layouts in '..\Layouts\Layouts.pas',
+  BasicLayouts in '..\Layouts\BasicLayouts.pas',
+  BorderLayout in '..\Layouts\BorderLayout.pas',
+  FlowLayout in '..\Layouts\FlowLayout.pas',
+  FrameLayout in '..\Layouts\FrameLayout.pas',
+  ConstraintedLayout in '..\Layouts\ConstraintedLayout.pas',
+  InputLayout in '..\Layouts\InputLayout.pas',
+  NotebookLayout in '..\Layouts\NotebookLayout.pas',
+  SplitterLayout in '..\Layouts\SplitterLayout.pas',
+  RuledLayout in '..\Layouts\RuledLayout.pas',
+  LayoutMisc in '..\Layouts\LayoutMisc.pas',
+  STSNotifier in '..\Notifier\STSNotifier.pas',
+  RecordList in '..\Misc\RecordList.pas',
+  CmpUtils in '..\Misc\CmpUtils.pas',
+  ExUtils in '..\Misc\ExUtils.pas',
+  FreeNotifier in '..\Misc\FreeNotifier.pas',
+  Singleton in '..\Misc\Singleton.pas',
+  StsListBox in '..\ListBox\StsListBox.pas';
+
+end.
+

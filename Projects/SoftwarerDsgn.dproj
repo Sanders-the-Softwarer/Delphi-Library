@@ -1,9 +1,9 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
-        <ProjectGuid>{1762DDEF-7DD9-4AE1-B506-CB0449EC8893}</ProjectGuid>
-        <MainSource>Softwarer.dpk</MainSource>
+        <ProjectGuid>{427A4F93-71D8-46A1-8B2F-3808457A688A}</ProjectGuid>
+        <MainSource>SoftwarerDsgn.dpk</MainSource>
         <ProjectVersion>14.3</ProjectVersion>
-        <FrameworkType>None</FrameworkType>
+        <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
@@ -15,6 +15,11 @@
     </PropertyGroup>
     <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Base)'=='true') or '$(Base_Win32)'!=''">
         <Base_Win32>true</Base_Win32>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Base)'=='true') or '$(Base_Win64)'!=''">
+        <Base_Win64>true</Base_Win64>
         <CfgParent>Base</CfgParent>
         <Base>true</Base>
     </PropertyGroup>
@@ -35,12 +40,13 @@
         <Base>true</Base>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
-        <DCC_BplOutput>w:\$(Platform) - $(Config)\Exe</DCC_BplOutput>
-        <GenDll>true</GenDll>
-        <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;$(DCC_Namespace)</DCC_Namespace>
-        <GenPackage>true</GenPackage>
+        <DCC_DcpOutput>w:\Dcu</DCC_DcpOutput>
+        <DCC_BplOutput>w:\Exe</DCC_BplOutput>
         <DCC_CBuilderOutput>All</DCC_CBuilderOutput>
-        <DCC_DcuOutput>w:\$(Platform) - $(Config)\Dcu</DCC_DcuOutput>
+        <GenDll>true</GenDll>
+        <GenPackage>true</GenPackage>
+        <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;$(DCC_Namespace)</DCC_Namespace>
+        <DCC_DcuOutput>w:\Dcu</DCC_DcuOutput>
         <DCC_ExeOutput>.\$(Platform)\$(Config)</DCC_ExeOutput>
         <DCC_E>false</DCC_E>
         <DCC_N>false</DCC_N>
@@ -49,10 +55,14 @@
         <DCC_K>false</DCC_K>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
+        <DCC_UsePackage>rtl;Softwarer;$(DCC_UsePackage)</DCC_UsePackage>
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
-        <VerInfo_Locale>1033</VerInfo_Locale>
-        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_Win64)'!=''">
+        <DCC_UsePackage>rtl;$(DCC_UsePackage)</DCC_UsePackage>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1)'!=''">
         <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
@@ -63,8 +73,8 @@
         <DCC_RemoteDebug>true</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
-        <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Locale>1033</VerInfo_Locale>
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
@@ -78,22 +88,16 @@
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
         <DCCReference Include="rtl.dcp"/>
-        <DCCReference Include="vcl.dcp"/>
-        <DCCReference Include="Layouts\LayoutSettings.pas"/>
-        <DCCReference Include="Layouts\BaseLayout.pas"/>
-        <DCCReference Include="Layouts\DualLayout.pas"/>
-        <DCCReference Include="Layouts\Layouts.pas"/>
-        <DCCReference Include="Layouts\LayoutsDsgn.pas"/>
-        <DCCReference Include="Layouts\BasicLayouts.pas"/>
-        <DCCReference Include="Layouts\BorderLayout.pas"/>
-        <DCCReference Include="Layouts\FlowLayout.pas"/>
-        <DCCReference Include="Layouts\FrameLayout.pas"/>
-        <DCCReference Include="Layouts\ConstraintedLayout.pas"/>
-        <DCCReference Include="Layouts\InputLayout.pas"/>
-        <DCCReference Include="Layouts\NotebookLayout.pas"/>
-        <DCCReference Include="Layouts\SplitterLayout.pas"/>
-        <DCCReference Include="Layouts\RuledLayout.pas"/>
-        <DCCReference Include="Layouts\LayoutMisc.pas"/>
+        <DCCReference Include="designide.dcp"/>
+        <DCCReference Include="Softwarer.dcp"/>
+        <DCCReference Include="..\Layouts\LayoutsDsgn.pas"/>
+        <DCCReference Include="..\Layouts\NotebookLayoutDsgn.pas"/>
+        <DCCReference Include="..\Layouts\NotebookLayoutEdit.pas">
+            <Form>FormNotebookLayoutEdit</Form>
+        </DCCReference>
+        <DCCReference Include="..\Notifier\STSNotifierDsgn.pas"/>
+        <DCCReference Include="..\ListBox\StsListBoxDsgn.pas"/>
+        <DCCReference Include="..\Layouts\LayoutSettingsSelect.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -112,7 +116,7 @@
         <BorlandProject>
             <Delphi.Personality>
                 <Source>
-                    <Source Name="MainSource">Softwarer.dpk</Source>
+                    <Source Name="MainSource">SoftwarerDsgn.dpk</Source>
                 </Source>
                 <VersionInfo>
                     <VersionInfo Name="IncludeVerInfo">True</VersionInfo>

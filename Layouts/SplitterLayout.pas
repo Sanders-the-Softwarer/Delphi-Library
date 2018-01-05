@@ -22,8 +22,6 @@ TSplitterLayout - алгоритм выравнивания двух контролов горизонтально или
 
 unit SplitterLayout ;
 
-{$I '..\..\options.inc'}
-
 interface
 
 uses Windows, Classes, Controls, Types, Math, BaseLayout, ExtCtrls, Forms ;
